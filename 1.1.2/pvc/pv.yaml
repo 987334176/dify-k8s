@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: dify
 spec:
-  storageClassName: managed-nfs-storage
+  storageClassName: nfs-storage
   capacity:
     storage: 10Gi
   accessModes:

@@ -4,7 +4,7 @@ metadata:
   name: dify-pvc
   namespace: dify
 spec:
-  storageClassName: managed-nfs-storage
+  storageClassName: nfs-storage
   accessModes:
     - ReadWriteMany
   resources:
