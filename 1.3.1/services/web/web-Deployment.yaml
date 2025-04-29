@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: dify
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Always
+      containers:
+      - name: web
+        image: langgenius/dify-web:1.3.1
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: dify-config
+        env:
+        - name: SENTRY_DSN
+          valueFrom:
+            configMapKeyRef:
+              name: dify-config
+              key: WEB_SENTRY_DSN
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 0.5Gi
+        imagePullPolicy: IfNotPresent
