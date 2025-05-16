@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: worker
+  namespace: dify
+  labels:
+    app: worker
+    app.kubernetes.io/instance: worker
+spec:
+  serviceName: worker
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: worker
+          image: langgenius/dify-api:1.4.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 300m
+              memory: 1.5Gi
+            requests:
+              cpu: 100m
+              memory: 0.5Gi
+          envFrom:
+            - configMapRef:
+                name: dify-config
+          env:
+            - name: MODE
+              value: "worker"
+            - name: SENTRY_DSN
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: API_SENTRY_DSN
+            - name: SENTRY_TRACES_SAMPLE_RATE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: API_SENTRY_TRACES_SAMPLE_RATE
+            - name: SENTRY_PROFILES_SAMPLE_RATE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: API_SENTRY_PROFILES_SAMPLE_RATE
+            - name: INNER_API_KEY_FOR_PLUGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DIFY_INNER_API_KEY
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /app/api/storage
+              name: worker-storage
+              subPath: dify/volumes/app/storage
+      volumes:
+        - name: worker-storage
+          persistentVolumeClaim:
+            claimName: dify-pvc
