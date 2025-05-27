@@ -1,0 +1,239 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plugin-daemon
+  namespace: dify
+  labels:
+    app: plugin-daemon
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: plugin-daemon
+  template:
+    metadata:
+      labels:
+        app: plugin-daemon
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: plugin-daemon
+          image: langgenius/dify-plugin-daemon:0.1.1-local
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: dify-config
+          env:
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: DB_PLUGIN_DATABASE
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DAEMON_PORT
+            - name: SERVER_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DAEMON_KEY
+            - name: MAX_PLUGIN_PACKAGE_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_MAX_PACKAGE_SIZE
+            - name: PPROF_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_PPROF_ENABLED
+            - name: DIFY_INNER_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DIFY_INNER_API_URL
+            - name: DIFY_INNER_API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DIFY_INNER_API_KEY
+            - name: PLUGIN_REMOTE_INSTALLING_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DEBUGGING_HOST
+            - name: PLUGIN_REMOTE_INSTALLING_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DEBUGGING_PORT
+            - name: PLUGIN_WORKING_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_WORKING_PATH
+            - name: FORCE_VERIFYING_SIGNATURE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: FORCE_VERIFYING_SIGNATURE
+            - name: PYTHON_ENV_INIT_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_PYTHON_ENV_INIT_TIMEOUT
+            - name: PLUGIN_MAX_EXECUTION_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_MAX_EXECUTION_TIMEOUT
+            - name: PIP_MIRROR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PIP_MIRROR_URL
+            - name: PLUGIN_STORAGE_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_STORAGE_TYPE
+            - name: PLUGIN_STORAGE_LOCAL_ROOT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_STORAGE_LOCAL_ROOT
+            - name: PLUGIN_INSTALLED_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_INSTALLED_PATH
+            - name: PLUGIN_PACKAGE_CACHE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_PACKAGE_CACHE_PATH
+            - name: PLUGIN_MEDIA_CACHE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_MEDIA_CACHE_PATH
+            - name: PLUGIN_STORAGE_OSS_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_STORAGE_OSS_BUCKET
+            - name: S3_USE_AWS_MANAGED_IAM
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_USE_AWS_MANAGED_IAM
+            - name: S3_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_ENDPOINT
+            - name: S3_USE_PATH_STYLE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_USE_PATH_STYLE
+            - name: AWS_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AWS_ACCESS_KEY
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AWS_SECRET_KEY
+            - name: PAWS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AWS_SECRET_KEY
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AWS_REGION
+            - name: AZURE_BLOB_STORAGE_CONNECTION_STRING
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AZURE_BLOB_STORAGE_CONNECTION_STRING
+            - name: AZURE_BLOB_STORAGE_CONTAINER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AZURE_BLOB_STORAGE_CONTAINER_NAME
+            - name: TENCENT_COS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_TENCENT_COS_SECRET_KEY
+            - name: TENCENT_COS_SECRET_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_TENCENT_COS_SECRET_ID
+            - name: TENCENT_COS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_TENCENT_COS_REGION
+            - name: ALIYUN_OSS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_REGION
+            - name: ALIYUN_OSS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_ENDPOINT
+            - name: ALIYUN_OSS_ACCESS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_ACCESS_KEY_ID
+            - name: ALIYUN_OSS_ACCESS_KEY_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_ACCESS_KEY_SECRET
+            - name: ALIYUN_OSS_AUTH_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_AUTH_VERSION
+            - name: ALIYUN_OSS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_PATH
+          ports:
+            - containerPort: 5003
+              protocol: TCP
+              name: debug-port
+            - containerPort: 5002
+              protocol: TCP
+              name: service-port
+          resources:
+            limits:
+              cpu: 200m
+              memory: 600Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+            - mountPath: /app/storage
+              name: plugin-daemon-storage
+              subPath: dify/volumes/plugin_daemon
+      volumes:
+        - name: plugin-daemon-storage
+          persistentVolumeClaim:
+            claimName: dify-pvc
