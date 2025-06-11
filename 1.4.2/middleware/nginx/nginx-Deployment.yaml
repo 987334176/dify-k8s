@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: dify
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: dify-config
+        ports:
+          - containerPort: 80
+          - containerPort: 443
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+          - mountPath: /etc/nginx/nginx.conf.template
+            name: nginx-cm0
+            subPath: nginx.conf.template
+          - mountPath: /etc/nginx/proxy.conf.template
+            name: nginx-cm1
+            subPath: proxy.conf.template
+          - mountPath: /etc/nginx/https.conf.template
+            name: nginx-cm2
+            subPath: https.conf.template
+          - mountPath: /etc/nginx/conf.d/default.conf.template  # 挂载为单个文件
+            subPath: default.conf.template
+            name: nginx-cm3
+          - mountPath: /docker-entrypoint-mount.sh
+            name: nginx-cm4
+            subPath: docker-entrypoint-mount.sh
+          - mountPath: /etc/ssl
+            name: nginx-cm5
+        command: [ "sh","-c","cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
+      volumes:
+        - configMap:
+            items:
+              - key: nginx.conf.template
+                path: nginx.conf.template
+            name: nginx-cm0
+          name: nginx-cm0
+        - configMap:
+            items:
+              - key: proxy.conf.template
+                path: proxy.conf.template
+            name: nginx-cm1
+          name: nginx-cm1
+        - configMap:
+            items:
+              - key: https.conf.template
+                path: https.conf.template
+            name: nginx-cm2
+          name: nginx-cm2
+        - configMap:
+            items:
+              - key: default.conf.template
+                path: default.conf.template
+            name: nginx-cm3
+          name: nginx-cm3
+        - configMap:
+            items:
+              - key: docker-entrypoint.sh
+                path: docker-entrypoint-mount.sh
+            name: nginx-cm4
+          name: nginx-cm4
+        - configMap:
+            name: nginx-cm5
+          name: nginx-cm5
