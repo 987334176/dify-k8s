@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: weaviate
+  namespace: dify
+spec:
+  selector:
+    app: weaviate
+  type: NodePort
+  ports:
+  - name: weaviate
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
