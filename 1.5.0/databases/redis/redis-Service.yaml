@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: dify
+spec:
+  selector:
+    app: redis
+  type: NodePort
+  ports:
+  - name: redis
+    protocol: TCP
+    port: 6379
+    targetPort: 6379
