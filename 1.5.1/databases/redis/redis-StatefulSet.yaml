@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: dify
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: "redis"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: redis
+        image: redis:6-alpine
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: dify-config
+        env:
+          - name: REDISCLI_AUTH
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: REDIS_PASSWORD
+        ports:
+        - containerPort: 6379
+          name: redis-p
+        command: [ "redis-server", "--save", "20", "1", "--loglevel", "warning", "--requirepass", "$(REDIS_PASSWORD)" ]
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        livenessProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+        volumeMounts:
+          - mountPath: /data
+            name: redis-data
+            subPath: dify/volumes/redis/data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: dify-pvc

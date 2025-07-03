@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: api
+  labels:
+    app.kubernetes.io/instance: api
+    app: api
+  namespace: dify
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  minReadySeconds: 10
+  serviceName: api
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: langgenius/dify-api:1.5.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: dify-config
+          env:
+            - name: MODE
+              value: "api"
+            - name: SENTRY_DSN
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: API_SENTRY_DSN
+            - name: SENTRY_TRACES_SAMPLE_RATE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: API_SENTRY_TRACES_SAMPLE_RATE
+            - name: SENTRY_PROFILES_SAMPLE_RATE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: API_SENTRY_PROFILES_SAMPLE_RATE
+            - name: PLUGIN_REMOTE_INSTALL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: EXPOSE_PLUGIN_DEBUGGING_HOST
+            - name: PLUGIN_REMOTE_INSTALL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: EXPOSE_PLUGIN_DEBUGGING_PORT
+            - name: PLUGIN_MAX_PACKAGE_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_MAX_PACKAGE_SIZE
+            - name: INNER_API_KEY_FOR_PLUGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DIFY_INNER_API_KEY
+          ports:
+            - containerPort: 5001
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1.5Gi
+            requests:
+              cpu: 100m
+              memory: 0.5Gi
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /app/api/storage
+              name: api-storage
+              subPath: dify/volumes/app/storage
+      volumes:
+        - name: api-storage
+          persistentVolumeClaim:
+            claimName: dify-pvc
