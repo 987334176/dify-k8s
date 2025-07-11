@@ -214,3 +214,21 @@ PostgreSQL没有加白名单，修改文件`/var/lib/postgresql/data/pgdata/pg_h
 host    all             all             0.0.0.0/0               md5
 ```
 重启PostgreSQL
+## 5. dify升级
+dify支持跨版本升级，例如：将1.3.1版本升级到1.6.0版本。
+升级步骤：
+1. 将1.3.1版本的yaml文件，修改为1.6.0版本的yaml文件，等待所有组件运行正常，重启nginx组件。
+2. 更新PostgreSQL表结构，执行以下步骤:
+进入api容器
+```bash
+kubectl -n dify exec -it api-0 -- /bin/bash
+```
+默认会进入到路径/app/api，更新Python依赖项
+```bash
+uv sync
+```
+然后，让我们运行迁移脚本
+```bash
+uv run flask db upgrade
+```
+最后，再次重启api、Worker、Web这3个组件即可。
