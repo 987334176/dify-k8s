@@ -23,6 +23,7 @@
 1.5.1
 1.6.0
 1.7.0
+1.7.1
 ``` 
 
 # 目录结构
@@ -144,7 +145,7 @@ kubectl apply -f services/worker/worker-StatefulSet.yaml
 kubectl apply -f services/worker/worker-Service.yaml
 ```
 ### worker-beat
-1.7.0新增这个组件
+1.7.0新增组件，是一个 轻量级定时心跳守护进程
 ```bash
 kubectl apply -f services/worker-beat/worker-beat-StatefulSet.yaml
 kubectl apply -f services/worker-beat/worker-beat-Service.yaml
