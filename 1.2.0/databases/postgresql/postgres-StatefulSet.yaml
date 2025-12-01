@@ -35,7 +35,9 @@ spec:
           livenessProbe:
             exec:
               command:
-                - "pg_isready"
+                - sh
+                - '-c'
+                - pg_isready -h 127.0.0.1 -U "$PGUSER" -d "$POSTGRES_DB"
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 2
