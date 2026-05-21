@@ -45,7 +45,7 @@
 1.14.1
 1.14.2
 ``` 
-# 适用于版本 1.14.1 以及更高版本
+# 适用于版本 1.14.1 及更高版本
 由于篇幅较长，请访问链接查看。
 <a href="https://mp.weixin.qq.com/s/JOjANHdVhc6T2G25hCmpIQ" target="_blank" rel="noopener noreferrer">1.14.1重大更新</a>
 
