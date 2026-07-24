@@ -45,8 +45,13 @@
 1.14.1
 1.14.2
 1.15.0
+1.16.0
 ``` 
-# 适用于版本 1.14.1 及更高版本
+# 适用于版本 1.16.0
+由于篇幅较长，请访问链接查看。
+<a href="https://mp.weixin.qq.com/s/uOG3-hvcT3kr4ZLyK9a1jQ" target="_blank" rel="noopener noreferrer">Dify 1.16.0 重磅升级指南：Agent 正式登场，Workflow 进化成会动手的协作体</a>
+
+# 适用于版本 1.14.1 ~ 1.15.0版本
 由于篇幅较长，请访问链接查看。
 <a href="https://mp.weixin.qq.com/s/JOjANHdVhc6T2G25hCmpIQ" target="_blank" rel="noopener noreferrer">1.14.1重大更新</a>
 

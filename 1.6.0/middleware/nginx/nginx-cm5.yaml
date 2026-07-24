@@ -1,9 +1,0 @@
-apiVersion: v1
-data:
-  .gitkeep: ""
-kind: ConfigMap
-metadata:
-  labels:
-    io.kompose.service: nginx
-  name: nginx-cm5
-  namespace: dify
