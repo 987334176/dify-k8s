@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: dify
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: "postgres"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          imagePullPolicy: IfNotPresent
+          envFrom:
+          - configMapRef:
+              name: dify-config
+          ports:
+            - containerPort: 5432
+              name: postgres-port
+          resources:
+            limits:
+              cpu: 100m
+              memory: 300Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          livenessProbe:
+            exec:
+              command:
+                - "pg_isready"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 10
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-data
+              subPath: dify/volumes/db/data
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: dify-pvc

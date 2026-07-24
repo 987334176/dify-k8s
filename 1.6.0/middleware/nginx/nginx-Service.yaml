@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx
+  namespace: dify
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+  - name: nginx
+    port: 80
+    targetPort: 80

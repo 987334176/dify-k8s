@@ -1,0 +1,10 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storage
+provisioner: nfs-client  # 这里需要根据您的环境设置正确的 provisioner
+parameters:
+  archiveOnDelete: "false"
+  path: "/data/nfs_share"  # NFS 服务端的共享路径
+reclaimPolicy: Retain  # 保留存储资源，需要手动清理
+volumeBindingMode: Immediate  # PVC 创建后立即绑定 PV

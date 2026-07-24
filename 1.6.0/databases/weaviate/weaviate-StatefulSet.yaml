@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: weaviate
+  namespace: dify
+spec:
+  selector:
+    matchLabels:
+      app: weaviate
+  serviceName: weaviate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: weaviate
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: weaviate
+          image: semitechnologies/weaviate:1.19.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: weaviate-p
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          env:
+          - name: PERSISTENCE_DATA_PATH
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_PERSISTENCE_DATA_PATH
+          - name: QUERY_DEFAULTS_LIMIT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_QUERY_DEFAULTS_LIMIT
+          - name: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+          - name: DEFAULT_VECTORIZER_MODULE
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_DEFAULT_VECTORIZER_MODULE
+          - name: CLUSTER_HOSTNAME
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_CLUSTER_HOSTNAME
+          - name: AUTHENTICATION_APIKEY_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_APIKEY_ENABLED
+          - name: AUTHENTICATION_APIKEY_ALLOWED_KEYS
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_APIKEY_ALLOWED_KEYS
+          - name: AUTHENTICATION_APIKEY_USERS
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_APIKEY_USERS
+          - name: AUTHORIZATION_ADMINLIST_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHORIZATION_ADMINLIST_ENABLED
+          - name: AUTHORIZATION_ADMINLIST_USERS
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHORIZATION_ADMINLIST_USERS
+          volumeMounts:
+            - mountPath: /var/lib/weaviate
+              name: weaviate-data
+              subPath: dify/volumes/weaviate
+      volumes:
+        - name: weaviate-data
+          persistentVolumeClaim:
+            claimName: dify-pvc

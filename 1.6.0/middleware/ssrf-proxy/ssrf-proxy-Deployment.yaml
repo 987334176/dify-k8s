@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ssrf
+  namespace: dify
+  labels:
+    app:  ssrf
+spec:
+  selector:
+    matchLabels:
+      app: ssrf
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  ssrf
+    spec:
+      containers:
+      - name:  ssrf
+        image:  ubuntu/squid:latest
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: dify-config
+        env:
+          - name: HTTP_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SSRF_HTTP_PORT
+          - name: COREDUMP_DIR
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SSRF_COREDUMP_DIR
+          - name: REVERSE_PROXY_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SSRF_REVERSE_PROXY_PORT
+          - name: SANDBOX_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SSRF_SANDBOX_HOST
+          - name: SANDBOX_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_PORT
+        ports:
+          - containerPort: 3128
+            name: ssrf
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+          - mountPath: /etc/squid/squid.conf.template
+            subPath: squid.conf.template
+            name: ssrf-proxy-cm0
+          - mountPath: /tmp/
+            name: ssrf-proxy-cm1
+        command: [ "sh", "-c", "cp /tmp/docker-entrypoint.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
+      volumes:
+        - configMap:
+            name: ssrf-proxy-cm0
+          name: ssrf-proxy-cm0
+        - configMap:
+            name: ssrf-proxy-cm1
+          name: ssrf-proxy-cm1
+      restartPolicy: Always
