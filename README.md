@@ -46,7 +46,19 @@
 1.14.2
 1.15.0
 1.16.0
+1.16.1
 ``` 
+# 适用于版本 1.16.1
+dify 1.16.1新增组件agent-ssrf-proxy，它是 Dify 1.16.1 随 Agent V2 架构引入的一个专用 SSRF 防护代理，专门服务于新增的 local_sandbox（Agent 本地沙箱）组件，与原有的 ssrf-proxy（面向代码执行沙箱）相互独立。
+
+```bash
+kubectl apply -f middleware/agent-ssrf-proxy/agent-ssrf-proxy-cm0.yaml
+kubectl apply -f middleware/agent-ssrf-proxy/agent-ssrf-proxy-cm1.yaml
+kubectl apply -f middleware/agent-ssrf-proxy/agent-ssrf-proxy-cm2.yaml
+kubectl apply -f middleware/agent-ssrf-proxy/agent-ssrf-proxy-Deployment.yaml
+kubectl apply -f middleware/agent-ssrf-proxy/agent-ssrf-proxy-Service.yaml
+```
+
 # 适用于版本 1.16.0
 由于篇幅较长，请访问链接查看。
 <a href="https://mp.weixin.qq.com/s/uOG3-hvcT3kr4ZLyK9a1jQ" target="_blank" rel="noopener noreferrer">Dify 1.16.0 重磅升级指南：Agent 正式登场，Workflow 进化成会动手的协作体</a>
