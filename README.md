@@ -48,6 +48,21 @@
 1.16.0
 1.16.1
 ``` 
+
+注意：后续版本请参考dify官方helm，本项目停止维护，不再更新
+
+Dify官方Helm仓库的正式地址为 ‌https://langgenius.github.io/dify-helm‌，这是Dify官方团队维护的唯一官方Helm Chart源，支持社区版和企业版的Kubernetes部署 。
+
+标准部署命令
+```bash
+# 添加官方Helm仓库
+helm repo add dify https://langgenius.github.io/dify-helm
+# 更新本地仓库索引
+helm repo update
+# 安装/升级Dify到Kubernetes集群
+helm upgrade -i dify -f values.yaml dify/dify
+```
+
 # 适用于版本 1.16.1
 dify 1.16.1新增组件agent-ssrf-proxy，它是 Dify 1.16.1 随 Agent V2 架构引入的一个专用 SSRF 防护代理，专门服务于新增的 local_sandbox（Agent 本地沙箱）组件，与原有的 ssrf-proxy（面向代码执行沙箱）相互独立。
 
